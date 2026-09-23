@@ -1,59 +1,296 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# OfficePro
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**OfficePro** is a full-stack office management and HR ERP for small and medium-sized companies, built with **Laravel 12, PHP 8.2+, MySQL, Blade, Bootstrap 5 and vanilla JavaScript** (no React/Vue/Angular/Tailwind, no Node build step).
 
-## About Laravel
+It covers employees, departments, designations, attendance, leave, tasks (list + Kanban), payroll with PDF salary slips, expenses, assets, documents, reports (PDF/CSV), notifications, an activity log, global search, settings and role-based access control, with a light/dark responsive interface.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Contents
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. [Requirements](#1-requirements)
+2. [Installation](#2-installation)
+3. [Environment configuration](#3-environment-configuration)
+4. [Database, migrations and seed data](#4-database-migrations-and-seed-data)
+5. [Storage](#5-storage)
+6. [Running the app](#6-running-the-app)
+7. [Demo login credentials](#7-demo-login-credentials)
+8. [Roles and permissions](#8-roles-and-permissions)
+9. [Features](#9-features)
+10. [Project structure](#10-project-structure)
+11. [Database tables](#11-database-tables)
+12. [Main routes](#12-main-routes)
+13. [Scheduled jobs and queues](#13-scheduled-jobs-and-queues)
+14. [Testing](#14-testing)
+15. [Troubleshooting](#15-troubleshooting)
+16. [Known limitations](#16-known-limitations)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 1. Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Requirement | Version / notes |
+|---|---|
+| PHP | **8.2 or newer** (tested on 8.4) with extensions `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`, `gd` (image validation / PDF), `zip` |
+| Composer | 2.x |
+| MySQL | 8.0+ (or MariaDB 10.6+; tested on MariaDB 10.11) |
+| Node.js / npm | **Not required.** Bootstrap, Bootstrap Icons and Chart.js are bundled in `public/vendor`. |
+| Web server | `php artisan serve` for development, or Nginx/Apache pointing at `public/` |
 
-## Laravel Sponsors
+## 2. Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/nishathashmi06-collab/officepro-erp.git
+cd officepro-erp
 
-### Premium Partners
+composer install
+cp .env.example .env          # Windows: copy .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 3. Environment configuration
 
-## Contributing
+Edit `.env`. Secrets live **only** in `.env`, never in the source code.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```dotenv
+APP_NAME=OfficePro
+APP_ENV=local
+APP_DEBUG=true               # set to false in production
+APP_URL=http://localhost:8000
 
-## Code of Conduct
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=officepro
+DB_USERNAME=root
+DB_PASSWORD=
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+QUEUE_CONNECTION=sync        # "database" + `php artisan queue:work` in production
+MAIL_MAILER=log              # reset / notification e-mails go to storage/logs/laravel.log
+```
 
-## Security Vulnerabilities
+The company name, logo, timezone, date format, currency and working hours are set in the app under **Settings**, not in `.env`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 4. Database, migrations and seed data
 
-## License
+Create the database:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```sql
+CREATE DATABASE officepro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Run the migrations and load the demo data:
+
+```bash
+php artisan migrate --seed
+# or, to start over from scratch:
+php artisan migrate:fresh --seed
+```
+
+> **Demo / seed data.** `DatabaseSeeder` runs `DemoDataSeeder`. Every person, e-mail, salary, document and record it creates is fictional and exists only to show the system working. Seeded employees carry the note *"DEMO DATA — created by DemoDataSeeder"*, and the demo PDFs say so on the page.
+
+**Production install without demo data:** set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, then run:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class=ProductionSeeder --force
+```
+
+This creates the roles, permissions, leave types, expense categories and designations, plus one primary super admin.
+
+## 5. Storage
+
+```bash
+php artisan storage:link
+```
+
+- **Public disk** (`storage/app/public`, served via `public/storage`): profile photos and the company logo only.
+- **Private disk** (`storage/app/private`): employee documents, expense receipts and leave attachments. These are **never** reachable by a public URL. They are streamed through authorised routes (`/documents/{id}/download`, `/expenses/{id}/receipt`, `/leaves/{id}/attachment`) after a policy check. Stored filenames are random; the original name is kept only for display.
+
+Make sure `storage/` and `bootstrap/cache/` are writable by the web server.
+
+## 6. Running the app
+
+```bash
+php artisan serve              # http://localhost:8000
+# optional, in separate terminals:
+php artisan schedule:work      # deadline / expiry reminders, auto-absent marking
+php artisan queue:work         # only if QUEUE_CONNECTION=database
+```
+
+The shortcut `composer run setup` installs dependencies, creates `.env`, generates the key, migrates with seed data and links storage.
+
+## 7. Demo login credentials
+
+All demo accounts use the password **`password`**. On local installs the login page also shows one-click buttons that fill in each account.
+
+| Role | Email | Name |
+|---|---|---|
+| Super Admin (primary, cannot be deleted) | `superadmin@officepro.test` | Olivia Bennett |
+| Admin | `admin@officepro.test` | Marcus Reid |
+| HR Manager | `hr@officepro.test` | Priya Sharma |
+| Manager (IT) | `manager@officepro.test` | James Carter |
+| Manager (Sales & Marketing) | `manager2@officepro.test` | Sofia Martinez |
+| Employee (IT developer) | `employee@officepro.test` | Daniel Brooks |
+| Other employees | `aisha.khan@`, `lucas.weber@`, `emma.thompson@`, `noah.kim@`, `chloe.dubois@`, `ethan.walker@`, `grace.okafor@`, `mateo.rossi@`, `hannah.schmidt@` (all `@officepro.test`) | — |
+
+**Change or remove these accounts before going live.**
+
+## 8. Roles and permissions
+
+Permissions are checked **on the server** by `can:` route middleware, controller `authorize()` calls, Form Request `authorize()` methods, policies (`app/Policies`) and query scopes (`visibleTo()` on the models). Hiding a menu item is only cosmetic.
+
+| Role | Access |
+|---|---|
+| **Super Admin** | Everything, including roles & permissions, system settings, and managing admins. Always has every permission. |
+| **Admin** | All operational modules: employees, departments, attendance, leave, tasks, payroll, expenses, assets, documents, reports, users (not admin roles), activity log. |
+| **HR Manager** | Employees, departments, designations, attendance, leave (approve), payroll, documents, reports; can submit expenses. |
+| **Manager** | Their team (employees in departments they manage): profiles, attendance, leave approval, assign & review tasks, submit expenses. |
+| **Employee** | Self-service: own profile, attendance check-in/out, leave, tasks, approved payslips, visible documents, notifications. |
+
+Super admins can edit the role → permission matrix under **Roles & Permissions**, and changes apply immediately. Other safeguards:
+
+- An admin cannot grant the Admin or Super Admin role, or edit a super admin.
+- The primary super admin cannot be deleted, disabled or demoted.
+- Nobody can approve their own leave or their own expense (except a super admin for expenses).
+- Disabled accounts are signed out on their next request.
+
+## 9. Features
+
+- **Authentication:** login with remember-me, logout, rate limiting, forgot/reset password, optional self-registration (off by default, switchable in Settings), bcrypt hashing, sessions stored in the database.
+- **Dashboard:** built entirely from live queries. Greeting, check-in/out, stat cards (total/active employees, present/absent/late/on-leave today, pending leaves and tasks, monthly payroll and expenses), six Chart.js charts, pending leaves, upcoming deadlines, birthdays, expiring documents and recent activity. Employees get a personal version.
+- **Employees:** search, filters, sortable columns, pagination; create/edit with photo upload and optional login-account creation; deactivate or soft delete; a profile with **Overview / Attendance / Leaves / Tasks / Payroll / Documents / Activity** tabs.
+- **Departments & designations:** CRUD, assign a department manager, headcount and salary cost, delete guards.
+- **Attendance:** one-click check-in/out, late detection (start time plus grace minutes), half-day detection, automatic working hours, one record per employee per day (database unique index), manual create/edit by HR, filters (today / week / month / custom range, employee, department, status), period summary, and an `officepro:mark-absent` command.
+- **Leave:** five leave types (configurable), working-day calculation, balance tracking and enforcement, overlap prevention, required attachments per type, notifications to manager + HR, approve/reject with a note, cancellation.
+- **Tasks:** CRUD, priorities, statuses, progress, comments, activity history, a **drag-and-drop Kanban board**, and team-scoped assignment for managers.
+- **Payroll:** monthly generation (basic salary, allowance %, tax %, pro-rata deduction for unpaid leave). Gross = Basic + Allowances + Overtime + Bonus; Net = Gross − Deductions − Tax − Other deductions. Totals are always recalculated on the server. Edit with a live summary, then approve, bulk-approve, mark paid, view history, and download a **PDF salary slip** (dompdf).
+- **Expenses:** CRUD, private receipt upload, approve/reject, filters, category summary, category management.
+- **Assets:** register, assign, return (with condition), maintenance log and completion, assignment history, activity trail.
+- **Documents:** private uploads with type and size validation, per-employee or company-wide, an "employee visible" flag, download/preview, search and filters, expiry tracking, warnings and a daily alert command.
+- **Reports:** Employee, Attendance, Leave, Payroll, Expense, Task, Asset and Document reports, filtered by date, department, employee and status, exported as **PDF** or **CSV** (Excel-friendly, protected against formula injection) or printed.
+- **Notifications:** in-app database notifications with an unread badge, mark as read, mark all as read, and optional e-mail per type (user preference).
+- **Activity log:** user, action, module, record, description, IP and time, with filters.
+- **Global search:** live dropdown (Ctrl/⌘ K) and a full results page grouped by Employees, Tasks, Departments, Documents and Assets, all permission-aware.
+- **Settings:** company profile and logo, timezone, date format, currency, working hours, late grace, document expiry window, registration toggle. Settings are cached.
+- **UI:** reusable Blade components (`x-card`, `x-stat-card`, `x-status-badge`, `x-alert`, `x-modal`, `x-button`, `x-delete-button`, `x-table`, `x-form.*`, `x-page-header`, `x-breadcrumb`, `x-avatar`, `x-progress`, `x-chart`, custom pagination), a collapsible sidebar, mobile off-canvas navigation, tables that stack into cards on phones, and dark mode saved to localStorage and the user profile.
+- **Error pages:** friendly 403, 404, 419, 429, 500 and 503 pages. With `APP_DEBUG=false`, no stack traces are shown.
+
+## 10. Project structure
+
+```
+app/
+  Console/Commands/        officepro:task-deadlines, officepro:document-expiry, officepro:mark-absent
+  Http/Controllers/        one controller per module (+ Auth/)
+  Http/Middleware/         EnsureAccountIsActive, SecurityHeaders
+  Http/Requests/           Form Requests with validation + authorisation
+  Models/                  Eloquent models with relationships and visibleTo() scopes
+  Notifications/           AppNotification base + 7 notification types
+  Policies/                Employee, Attendance, Leave, Task, Payroll, Expense, Document, User
+  Services/                LeaveBalanceService, ReportService
+  Support/                 Permissions registry, Settings (cached), ActivityLogger
+  helpers.php              setting(), money(), fmt_date(), fmt_time(), label(), activity()
+database/
+  migrations/              all tables, foreign keys, indexes, soft deletes
+  seeders/                 RolePermission, ReferenceData, DemoData (demo), Production
+resources/views/
+  layouts/ partials/ components/ auth/ errors/
+  dashboard/ employees/ departments/ designations/ attendance/ leaves/ leave-types/
+  tasks/ payroll/ expenses/ expense-categories/ assets/ documents/ reports/
+  notifications/ activity-logs/ users/ roles/ settings/ profile/ search/
+public/
+  css/app.css  js/app.js  js/charts.js  images/  vendor/ (Bootstrap, Bootstrap Icons, Chart.js)
+routes/web.php  routes/console.php
+tests/Unit  tests/Feature
+```
+
+The web controllers call models, services and policies, which have no web-specific code. A JSON API for mobile apps can reuse them from `routes/api.php`.
+
+## 11. Database tables
+
+`users`, `roles`, `permissions`, `permission_role`, `employees`, `departments`, `designations`, `attendances`, `leave_types`, `leaves`, `tasks`, `task_comments`, `payrolls`, `expenses`, `expense_categories`, `assets`, `asset_assignments`, `asset_maintenances`, `documents`, `notifications`, `activity_logs`, `settings`, plus Laravel's `password_reset_tokens`, `sessions`, `cache`, `jobs` and `failed_jobs`.
+
+Key relationships:
+
+- Department `hasMany` Employees and `belongsTo` a manager (Employee).
+- Employee `belongsTo` Department, Designation and User, and `hasMany` Attendances, Leaves, Tasks (`assigned_to`), Payrolls, Documents and Assets.
+- Task `belongsTo` an Employee (assignee) and a User (creator).
+- Leave and Payroll `belongsTo` Employee.
+- Asset `belongsTo` Employee when assigned.
+
+Unique indexes: `attendances(employee_id, date)` and `payrolls(employee_id, period)`. Soft deletes are used on users, employees, departments, leaves, tasks, expenses, assets and documents.
+
+## 12. Main routes
+
+| Area | Routes |
+|---|---|
+| Auth | `GET/POST /login`, `POST /logout`, `/register`, `/forgot-password`, `/reset-password/{token}` |
+| Dashboard / search | `GET /`, `GET /search?q=` (HTML or JSON) |
+| Employees | `resource /employees`, `POST /employees/{id}/deactivate` |
+| Org | `resource /departments`, `resource /designations` |
+| Attendance | `GET /attendance`, `POST /attendance/check-in`, `POST /attendance/check-out`, create/edit/update/delete |
+| Leave | `GET/POST /leaves`, `GET /leaves/{id}`, `POST /leaves/{id}/approve / reject / cancel`, `GET /leaves/{id}/attachment`, `resource /leave-types` |
+| Tasks | `resource /tasks`, `GET /tasks/board`, `PATCH /tasks/{id}/status`, `POST /tasks/{id}/comments` |
+| Payroll | `GET /payroll`, `GET/POST /payroll/generate`, `POST /payroll/bulk-approve`, `GET/PUT/DELETE /payroll/{id}`, `POST /payroll/{id}/approve`, `POST /payroll/{id}/pay`, `GET /payroll/{id}/slip` |
+| Expenses | `resource /expenses`, `POST /expenses/{id}/approve / reject`, `GET /expenses/{id}/receipt`, `resource /expense-categories` |
+| Assets | `resource /assets`, `POST /assets/{id}/assign / return / maintenance`, `POST /assets/{id}/maintenance/{m}/complete` |
+| Documents | `resource /documents`, `GET /documents/{id}/download` |
+| Reports | `GET /reports`, `GET /reports/{type}`, `GET /reports/{type}/export/{csv\|pdf}` |
+| System | `/notifications`, `/activity-logs`, `resource /users`, `/roles`, `/settings`, `/profile` |
+
+Run `php artisan route:list --except-vendor` for the full list (136 routes).
+
+## 13. Scheduled jobs and queues
+
+Defined in `routes/console.php`. Run `php artisan schedule:work` for local development, or add this cron entry in production:
+
+```
+* * * * * cd /path/to/officepro-erp && php artisan schedule:run >> /dev/null 2>&1
+```
+
+| Command | Schedule | Purpose |
+|---|---|---|
+| `officepro:task-deadlines` | daily 08:00 | Notify assignees of tasks due within a day or overdue (once per task) |
+| `officepro:document-expiry` | daily 08:15 | Alert document managers and the owner about expiring documents |
+| `officepro:mark-absent {date?}` | weekdays 23:30 | Create *absent*/*leave* attendance records for employees who did not check in |
+
+Notifications are queued (`ShouldQueue`). With `QUEUE_CONNECTION=sync` they are sent immediately. With `database`, run `php artisan queue:work`.
+
+## 14. Testing
+
+```bash
+php artisan test
+```
+
+There are 77 tests with about 460 assertions: unit tests for the payroll, hours and working-day calculations, and feature tests for authentication, role permissions, employees, departments, attendance, leave workflow, tasks and the Kanban API, payroll and PDF slips, expenses and receipts, assets, private documents, reports (CSV/PDF), search, notifications, settings, error pages, and a full demo-data smoke test across roles.
+
+By default the tests use in-memory SQLite. To run them against MySQL:
+
+```bash
+DB_CONNECTION=mysql DB_DATABASE=officepro_test DB_USERNAME=root DB_PASSWORD= php artisan test
+```
+
+## 15. Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `SQLSTATE[HY000] [2002] Connection refused` | MySQL isn't running, or `DB_HOST`/`DB_PORT` are wrong. |
+| `SQLSTATE[HY000] [1049] Unknown database` | Create the database (see section 4). |
+| `No application encryption key has been specified` | `php artisan key:generate` |
+| Profile photos / logo not showing | `php artisan storage:link`, and check that `APP_URL` matches the URL you browse. |
+| 419 "Session expired" after a long idle period | Refresh and sign in again. The CSRF token expired with the session (`SESSION_LIFETIME`). |
+| Permission denied writing logs/cache | `chmod -R 775 storage bootstrap/cache` (and chown to the web server user). |
+| Password-reset e-mail doesn't arrive | With `MAIL_MAILER=log`, the e-mail (including the link) is in `storage/logs/laravel.log`. Configure SMTP for real delivery. |
+| Notifications not appearing | With `QUEUE_CONNECTION=database`, run `php artisan queue:work`. |
+| Changed settings not applied | `php artisan cache:clear` (settings are cached; saving in the UI clears them automatically). |
+| Charts or icons missing | Make sure `public/vendor` was deployed. There is no npm build step. |
+| Fonts look slightly different offline | The Inter font loads from Google Fonts and falls back to the system font. |
+
+## 16. Known limitations
+
+- Attendance is web-based check-in/out. There is no biometric device or geo-fencing integration.
+- Leave balances are a yearly allowance per type. Carry-forward, accrual and public-holiday calendars are not modelled; weekends (Sat/Sun) are excluded.
+- Payroll uses a flat configurable tax percentage, not country-specific tax tables.
+- The "Excel" export is UTF-8 CSV, which opens in Excel. Native `.xlsx` is not generated.
+- There is no REST API yet. The service/policy layer is ready for one.
+- The UI is English only.

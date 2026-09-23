@@ -544,3 +544,8 @@ a.op-list-item:hover { background: var(--op-surface-2); color: var(--op-text); }
 }
 .op-print-only { display: none; }
 .min-w-0 { min-width: 0; }
+@media (max-width: 575.98px) {
+    .op-stat { flex-direction: column; gap: .6rem; padding: 1rem; }
+    .op-stat .icon { width: 40px; height: 40px; font-size: 1.1rem; }
+}
+.op-progress.info .bar { background: linear-gradient(90deg, #0ea5e9, #6366f1); }

@@ -19,7 +19,7 @@
                     </div>
                     <div class="h4 mb-0">{{ $b->remaining === null ? '∞' : rtrim(rtrim(number_format($b->remaining, 1), '0'), '.') }} <span class="small text-muted fw-normal">{{ $b->remaining === null ? 'unpaid' : 'of '.$b->allowed.' left' }}</span></div>
                     <div class="small text-muted mb-2">{{ (float) $b->used }} used · {{ (float) $b->pending }} pending</div>
-                    @if ($b->allowed)<x-progress :value="($b->used + $b->pending) / $b->allowed * 100" :show-label="false" />@endif
+                    @if ($b->allowed)<x-progress :value="($b->used + $b->pending) / $b->allowed * 100" variant="info" :show-label="false" />@endif
                 </div>
             </div>
         @endforeach

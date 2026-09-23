@@ -195,7 +195,7 @@ class DemoDataSeeder extends Seeder
                 'reviewed_by' => in_array($status, ['approved', 'rejected']) ? $hr->id : null,
                 'reviewed_at' => in_array($status, ['approved', 'rejected']) ? $start->copy()->subDays(3) : null,
                 'review_note' => $status === 'rejected' ? 'Please schedule outside the release week.' : null,
-                'created_at' => $start->copy()->subDays(7),
+                'created_at' => $start->copy()->subDays(7)->min(now()->subHours(2)),
             ]);
 
             if ($status === 'pending') {

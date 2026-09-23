@@ -43,7 +43,7 @@
             <tbody>
             @foreach ($records as $model)
                 @php($row = $service->row($type, $model))
-                <tr>@foreach ($columns as $key => $label)<td data-label="{{ $label }}" class="{{ in_array($key, $numeric) ? 'text-end' : '' }}">@if ($key === 'status')<x-status-badge :status="Str::snake(strtolower($row[$key]))" :label="$row[$key]" />@else{{ $row[$key] }}@endif</td>@endforeach</tr>
+                <tr>@foreach ($columns as $key => $label)<td data-label="{{ $label }}" class="text-nowrap {{ in_array($key, $numeric) ? 'text-end' : '' }}">@if ($key === 'status')<x-status-badge :status="Str::snake(strtolower($row[$key]))" :label="$row[$key]" />@else{{ $row[$key] }}@endif</td>@endforeach</tr>
             @endforeach
             </tbody>
         </x-table>

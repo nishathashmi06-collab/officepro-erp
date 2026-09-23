@@ -23,7 +23,8 @@
     .lines td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; }
     .lines .amt { text-align: right; }
     .lines .total td { font-weight: bold; background: #f8fafc; border-bottom: 0; }
-    .net { margin-top: 18px; background: #4f46e5; color: #fff; border-radius: 8px; padding: 14px 18px; }
+    .net { margin-top: 18px; background: #4f46e5; color: #fff; border-radius: 8px; }
+    .net td { padding: 14px 18px; }
     .net .amount { font-size: 22px; font-weight: bold; text-align: right; }
     .footer { margin-top: 30px; font-size: 9px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 10px; }
     .sign td { padding-top: 40px; width: 50%; }

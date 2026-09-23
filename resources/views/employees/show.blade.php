@@ -123,7 +123,7 @@
                                 <span class="text-muted">{{ $b->remaining === null ? $b->used.' used (unlimited)' : $b->remaining.' of '.$b->allowed.' left' }}</span>
                             </div>
                             @if ($b->allowed > 0)
-                                <x-progress :value="$b->allowed ? ($b->used + $b->pending) / $b->allowed * 100 : 0" :show-label="false" />
+                                <x-progress :value="$b->allowed ? ($b->used + $b->pending) / $b->allowed * 100 : 0" variant="info" :show-label="false" />
                             @endif
                         </div>
                     @endforeach
