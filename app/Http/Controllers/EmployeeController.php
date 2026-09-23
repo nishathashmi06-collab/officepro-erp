@@ -71,7 +71,7 @@ class EmployeeController extends Controller
     {
         $employee = DB::transaction(function () use ($request) {
             $data = $this->payload($request);
-            $data['employee_code'] = $data['employee_code'] ?: Employee::nextCode();
+            $data['employee_code'] = ($data['employee_code'] ?? null) ?: Employee::nextCode();
 
             if ($request->boolean('create_account')) {
                 $data['user_id'] = $this->createAccount($request)->id;
@@ -139,7 +139,7 @@ class EmployeeController extends Controller
     {
         DB::transaction(function () use ($request, $employee) {
             $data = $this->payload($request, $employee);
-            $data['employee_code'] = $data['employee_code'] ?: $employee->employee_code;
+            $data['employee_code'] = ($data['employee_code'] ?? null) ?: $employee->employee_code;
 
             if ($request->boolean('create_account') && ! $employee->user_id) {
                 $data['user_id'] = $this->createAccount($request)->id;

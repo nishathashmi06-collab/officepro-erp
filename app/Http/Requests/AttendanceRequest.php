@@ -26,7 +26,7 @@ class AttendanceRequest extends FormRequest
                 'required',
                 Rule::exists('employees', 'id')->whereNull('deleted_at'),
                 // One record per employee per day.
-                Rule::unique('attendances')->where(fn ($q) => $q->where('date', $this->input('date')))->ignore($attendance?->id),
+                Rule::unique('attendances')->where(fn ($q) => $q->whereDate('date', (string) $this->input('date')))->ignore($attendance?->id),
             ],
             'date' => ['required', 'date', 'before_or_equal:today'],
             'status' => ['required', Rule::in(Attendance::STATUSES)],

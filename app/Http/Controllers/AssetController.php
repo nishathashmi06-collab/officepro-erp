@@ -45,7 +45,7 @@ class AssetController extends Controller
     public function store(AssetRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $data['asset_code'] = $data['asset_code'] ?: Asset::nextCode();
+        $data['asset_code'] = ($data['asset_code'] ?? null) ?: Asset::nextCode();
         $asset = Asset::create($data);
         activity('created', 'assets', "Added asset {$asset->name} ({$asset->asset_code})", $asset);
 
@@ -73,7 +73,7 @@ class AssetController extends Controller
     public function update(AssetRequest $request, Asset $asset): RedirectResponse
     {
         $data = $request->validated();
-        $data['asset_code'] = $data['asset_code'] ?: $asset->asset_code;
+        $data['asset_code'] = ($data['asset_code'] ?? null) ?: $asset->asset_code;
 
         // Assignment status is controlled by assign/return actions only.
         if ($asset->status === 'assigned') {
