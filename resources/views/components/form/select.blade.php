@@ -3,7 +3,7 @@
 @php($current = (string) old($name, $value))
 <div {{ $attributes->only('class')->class(['mb-3']) }}>
     @if ($label)<label for="{{ $id }}" class="form-label">{{ $label }}@if($required)<span class="req">*</span>@endif</label>@endif
-    <select name="{{ $name }}" id="{{ $id }}" {{ $attributes->except('class')->class(['form-select', 'is-invalid' => $errors->has($name)]) }} @if ($required) required @endif>
+    <select name="{{ $name }}" id="{{ $id }}" {{ $attributes->except(['class', 'id'])->class(['form-select', 'is-invalid' => $errors->has($name)]) }} @if ($required) required @endif>
         @if ($placeholder !== null)<option value="">{{ $placeholder }}</option>@endif
         @foreach ($options as $optValue => $optLabel)
             <option value="{{ $optValue }}" @selected($current !== '' && $current === (string) $optValue)>{{ $optLabel }}</option>

@@ -7,7 +7,7 @@
     @if ($prefix)<span class="input-group-text">{{ $prefix }}</span>@endif
     <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
            @if ($type !== 'file' && $type !== 'password') value="{{ old($errorKey, $value) }}" @endif
-           {{ $attributes->except('class')->class(['form-control', 'is-invalid' => $errors->has($errorKey)]) }}
+           {{ $attributes->except(['class', 'id'])->class(['form-control', 'is-invalid' => $errors->has($errorKey)]) }}
            @if ($required) required @endif>
     @if ($suffix)<span class="input-group-text">{{ $suffix }}</span>@endif
     @error($errorKey)<div class="invalid-feedback">{{ $message }}</div>@enderror

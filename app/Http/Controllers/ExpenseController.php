@@ -31,8 +31,8 @@ class ExpenseController extends Controller
         $summary = (clone $query)->reorder()->selectRaw('status, COUNT(*) as records, SUM(amount) as total')->groupBy('status')->get()->keyBy('status');
 
         $monthStart = today()->startOfMonth();
-        $byCategory = Expense::visibleTo($user)->where('status', 'approved')
-            ->whereBetween('date', [$monthStart->toDateString(), today()->endOfMonth()->toDateString()])
+        $byCategory = Expense::visibleTo($user)->where('expenses.status', 'approved')
+            ->whereBetween('expenses.date', [$monthStart->toDateString(), today()->endOfMonth()->toDateString()])
             ->join('expense_categories', 'expense_categories.id', '=', 'expenses.expense_category_id')
             ->selectRaw('expense_categories.name as category, SUM(expenses.amount) as total')
             ->groupBy('expense_categories.name')
