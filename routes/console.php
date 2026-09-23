@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Run `php artisan schedule:work` (or a cron entry for `schedule:run`) in production.
+Schedule::command('officepro:task-deadlines')->dailyAt('08:00');
+Schedule::command('officepro:document-expiry')->dailyAt('08:15');
+Schedule::command('officepro:mark-absent')->weekdays()->dailyAt('23:30');
