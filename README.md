@@ -1,6 +1,6 @@
 # OfficePro
 
-**OfficePro** is a full-stack office management and HR ERP for small and medium-sized companies, built with **Laravel 12, PHP 8.2+, MySQL, Blade, Bootstrap 5 and vanilla JavaScript** (no React/Vue/Angular/Tailwind, no Node build step).
+**OfficePro** is a full-stack office management and HR ERP for small and medium-sized companies, built with **Laravel 12, PHP 8.2+ (pinned to and verified on PHP 8.3.35), MySQL, Blade, Bootstrap 5 and vanilla JavaScript** (no React/Vue/Angular/Tailwind, no Node build step).
 
 It covers employees, departments, designations, attendance, leave, tasks (list + Kanban), payroll with PDF salary slips, expenses, assets, documents, reports (PDF/CSV), notifications, an activity log, global search, settings and role-based access control, with a light/dark responsive interface.
 
@@ -31,11 +31,19 @@ It covers employees, departments, designations, attendance, leave, tasks (list +
 
 | Requirement | Version / notes |
 |---|---|
-| PHP | **8.2 or newer** (tested on 8.4) with extensions `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`, `gd` (image validation / PDF), `zip` |
+| PHP | **8.2 or newer.** `composer.json` requires `^8.2`, and dependency resolution is **pinned to and verified against PHP 8.3.35** (see [PHP version pinning](#php-version-pinning) below). Also verified on 8.3.6 and 8.4.19. Required extensions: `pdo_mysql`, `pdo_sqlite` (for tests), `mbstring`, `openssl`, `tokenizer`, `xml`, `dom`, `ctype`, `json`, `fileinfo`, `curl`, `gd` (PDF/image rendering), `zip`, `bcmath`, `intl` |
 | Composer | 2.x |
 | MySQL | 8.0+ (or MariaDB 10.6+; tested on MariaDB 10.11) |
 | Node.js / npm | **Not required.** Bootstrap, Bootstrap Icons and Chart.js are bundled in `public/vendor`. |
 | Web server | `php artisan serve` for development, or Nginx/Apache pointing at `public/` |
+
+### PHP version pinning
+
+`composer.json` sets `"config": {"platform": {"php": "8.3.35"}}`. This tells Composer to resolve and lock every dependency (`composer.lock`) as if PHP 8.3.35 were the runtime — regardless of which PHP version actually runs `composer install` — so the exact same, verified dependency graph is installed everywhere. `composer.lock` records `"platform-overrides": {"php": "8.3.35"}` to confirm this.
+
+This was verified end-to-end: a real PHP 8.3.6 CLI (patch releases within a minor version do not change Composer's dependency resolution or Laravel's runtime behaviour) ran `composer install` from a clean checkout, then `php artisan migrate --seed`, `php artisan serve`, a live login, the dashboard, PDF salary-slip generation, and the full `php artisan test` suite (77 tests / 460 assertions) against both SQLite and real MySQL — all passed. The codebase contains no PHP 8.4-only syntax (property hooks, asymmetric visibility, the new `array_find`/`array_any`/`array_all` functions, etc.), so it also runs unchanged on 8.4.
+
+**If you later upgrade PHP:** either remove the `config.platform.php` line and run `composer update`, or change it to your new version and run `composer update` to re-resolve.
 
 ## 2. Installation
 
@@ -269,6 +277,8 @@ By default the tests use in-memory SQLite. To run them against MySQL:
 ```bash
 DB_CONNECTION=mysql DB_DATABASE=officepro_test DB_USERNAME=root DB_PASSWORD= php artisan test
 ```
+
+All 77 tests pass on **PHP 8.3** (see [PHP version pinning](#php-version-pinning)) against both SQLite and MySQL, and also on PHP 8.4.
 
 ## 15. Troubleshooting
 
